@@ -1,0 +1,9 @@
+Channel 1-2: 1 2 
+Channel 3-4: 
+Channel 5-6: 3 
+Channel 7-8: 4 
+Digital In A: 5 
+Digital In B: 6 
+Digital In C: 
+Digital In D: 
+Pink noise: 

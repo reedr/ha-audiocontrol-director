@@ -1,0 +1,17 @@
+AMPLIFIER NAME: Distributed Amp 5
+GLOBAL TEMP: 111 F & Normal
+GLOBAL VOLTAGE: 122 & Normal
+ZONE OUTPUT PROTECT: 
+GLOBAL PROTECTION: Normal
+THERMAL PROTECTION: Normal
+IP ADDRESS: 10.0.1.102
+DATE 10/01/2026
+TIME '02:10:48
+
+ZONES, #, POWER STATE, INPUT, VOLUME, BASS, TREBLE, EQ, GROUP, TEMP, SIG. SENSE
+patio, 1, on, MX1 & 1, 100, 0, 0, Acoustic and 0, 1, 114 F/Normal, off
+patio sub, 2, on, MX1 & 1, 100, 0, 0, unsaved values and -1, 1, 116 F/Normal, off
+balcony, 3, on, MX3 & 3, 100, 0, 0, unsaved values and -1, 0, 111 F/Normal, off
+master porch, 4, on, MX4 & 4, 100, 0, 0, unsaved values and -1, 0, 104 F/Normal, off
+Digital Out A, 5, on, MX5 & 5, 100, 0, 0, unsaved values and -1, 0, 0 F/Low, off
+Digital Out B, 6, on, MX6 & 6, 100, 0, 0, unsaved values and -1, 0, 0 F/Low, off

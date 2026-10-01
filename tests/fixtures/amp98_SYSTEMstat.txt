@@ -1,0 +1,21 @@
+AMPLIFIER NAME: Distributed Amp 1
+GLOBAL TEMP: 124 F & Normal
+GLOBAL VOLTAGE: 124 & Normal
+ZONE OUTPUT PROTECT: 
+GLOBAL PROTECTION: Normal
+THERMAL PROTECTION: Normal
+IP ADDRESS: 10.0.1.98
+DATE 10/01/2026
+TIME '02:11:13
+
+ZONES, #, POWER STATE, INPUT, VOLUME, BASS, TREBLE, EQ, GROUP, TEMP, SIG. SENSE
+Music room, 1, on, MX1 & 1, 100, 0, 0, Acoustic and 0, 1, 131 F/Normal, off
+music room, 2, on, MX1 & 1, 100, 0, 0, Acoustic and 0, 1, 131 F/Normal, off
+music room sub, 3, on, MX1 & 1, 100, 0, 0, User 3 and 5, 1, 123 F/Normal, off
+sauna, 4, on, MX4 & 4, 100, 0, 0, unsaved values and -1, 0, 123 F/Normal, off
+Gym, 5, on, MX5 & 5, 100, 0, 0, User 3 and 5, 0, 122 F/Normal, off
+great room, 6, on, MX6 & 6, 100, 0, 0, User 3 and 5, 2, 122 F/Normal, off
+great room, 7, on, MX6 & 6, 100, 0, 0, Party and 2, 2, 120 F/Normal, off
+great room sub, 8, on, MX6 & 6, 100, 0, 0, Party and 2, 2, 120 F/Normal, off
+Digital Out A, 9, on, MX9 & 9, 100, 0, 0, unsaved values and -1, 0, 0 F/Low, off
+Digital Out B, 10, on, MX10 & 10, 100, 0, 0, unsaved values and -1, 0, 0 F/Low, off

@@ -1,0 +1,27 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "protection": { "default": "mdi:shield-check", "state": { "on": "mdi:shield-alert" } },
+      "short_circuit": { "default": "mdi:flash-outline", "state": { "on": "mdi:flash-alert" } },
+      "line_voltage": { "default": "mdi:sine-wave", "state": { "on": "mdi:flash-triangle" } }
+    },
+    "button": {
+      "all_zones_on": { "default": "mdi:speaker-multiple" },
+      "all_zones_off": { "default": "mdi:speaker-off" },
+      "power_on": { "default": "mdi:power" },
+      "standby": { "default": "mdi:power-standby" }
+    },
+    "number": {
+      "zone_volume": { "default": "mdi:volume-high" },
+      "bass": { "default": "mdi:speaker" },
+      "treble": { "default": "mdi:music-clef-treble" }
+    },
+    "select": {
+      "eq": { "default": "mdi:equalizer" }
+    },
+    "switch": {
+      "signal_sense": { "default": "mdi:waveform" },
+      "loudness": { "default": "mdi:volume-plus" }
+    }
+  }
+}
