@@ -75,3 +75,7 @@ This integration is based on Philip Flesher's
 [audiocontrol-director-hass](https://github.com/philipflesher/audiocontrol-director-hass) and
 [audiocontrol-director-telnet-py](https://github.com/philipflesher/audiocontrol-director-telnet-py).
 It has been rewritten, with the telnet client folded in.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
