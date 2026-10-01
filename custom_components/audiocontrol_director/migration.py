@@ -10,7 +10,7 @@ player. Each setup:
 * moves entities off other devices of the entry onto the amplifier's (keeping
   the zone device's area) and removes those devices;
 * removes grouped zones' players, then creates each missing group player named
-  after its first zone's (``music_room_amp_1`` -> ``media_player.music_room_amp``),
+  after its main zone's (``music_room_amp_1`` -> ``media_player.music_room_amp``),
   and missing ungrouped zone players named after their zone device;
 * after the platforms are set up, removes entities made obsolete by a change of
   groups (and the old amplifier player). Nothing else is ever removed, so a bad
@@ -116,7 +116,9 @@ def async_prepare_registry(
     for group, zones in groups.items():
         members = [legacy[z.code] for z in zones if z.code in legacy]
         if members:
-            first = members[0]
+            # A member without numbering is the room's main zone (zen_den_amp
+            # grouped with master_bath_closet_amp_2); otherwise the first.
+            first = min(members, key=lambda m: bool(_MEMBER_ID_SUFFIX.search(m.object_id)))
             _seed(
                 ent_reg,
                 entry,
