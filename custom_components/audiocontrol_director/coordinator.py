@@ -44,10 +44,9 @@ class DirectorCoordinator(DataUpdateCoordinator[Status]):
         )
         self.director = director
         self.base_id: str = config_entry.unique_id or config_entry.entry_id
-        # (domain, unique ID) of every entity created, for pruning the registry.
-        self.unique_ids: set[tuple[str, str]] = set()
         self.want_loudness = False
         self._loudness_at = 0.0
+        self._loudness_gen = 0
         self._layout: tuple | None = None
         self._pending_layout: tuple | None = None
 
@@ -77,8 +76,9 @@ class DirectorCoordinator(DataUpdateCoordinator[Status]):
         return None
 
     def loudness_changed(self) -> None:
-        """Re-read loudness on the next poll."""
+        """Re-read loudness on the next poll, even if one is under way."""
         self._loudness_at = 0.0
+        self._loudness_gen += 1
 
     async def _async_setup(self) -> None:
         try:
@@ -90,11 +90,12 @@ class DirectorCoordinator(DataUpdateCoordinator[Status]):
         loud = self.want_loudness and time.monotonic() - self._loudness_at >= (
             LOUDNESS_INTERVAL.total_seconds()
         )
+        gen = self._loudness_gen
         try:
             status = await self.director.async_get_status(loudness=loud)
         except DirectorError as err:
             raise UpdateFailed(str(err)) from err
-        if loud:
+        if loud and gen == self._loudness_gen:
             self._loudness_at = time.monotonic()
         elif self.data is not None:
             status = replace(status, loudness=self.data.loudness)

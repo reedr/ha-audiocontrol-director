@@ -84,6 +84,20 @@ async def test_session(amp1) -> None:
         await director.close()
 
 
+async def test_paused_table(amp1, monkeypatch) -> None:
+    """A stall between rows longer than the idle window doesn't cut the table short."""
+    monkeypatch.setattr("custom_components.audiocontrol_director.director.REPLY_TIMEOUT", 5)
+    amp1.row_pause = 0.06
+    director = Director("127.0.0.1")
+    try:
+        status = await director.async_get_status()
+        assert len(status.outputs) == 10
+        # The session is still in step afterwards.
+        assert await director.async_get_name() == "Distributed Amp 1"
+    finally:
+        await director.close()
+
+
 async def test_no_answer(amp1) -> None:
     amp1.silent = True
     director = Director("127.0.0.1")

@@ -26,6 +26,8 @@ IDLE_AFTER_LINE = 0.25
 IDLE_NO_LINE = 0.4
 # AudioControl recommends at most 20 commands a second.
 MIN_COMMAND_GAP = 0.05
+# Sent after long queries to mark the end of their reply (see Director.request).
+SENTINEL = "PROTECT?"
 
 _IAC = 255
 
@@ -299,61 +301,89 @@ class Director:
         async with self._lock:
             await self._drop()
 
-    async def _read_reply(self, command: str) -> str:
+    async def _read_reply(self, command: str, sentinel: str | None) -> str:
+        """Read one reply.
+
+        Replies have no end marker, so the end is normally taken as a short
+        silence after a line. Long replies (status tables) are followed by a
+        ``sentinel`` query instead and read up to its echo, so a pause in the
+        middle of a table can't cut it short.
+        """
         assert self._reader is not None
         buf = b""
+        echo = f"{command}\r".encode()
+        end = f"{sentinel}\r".encode() if sentinel else None
         deadline = time.monotonic() + REPLY_TIMEOUT
         while True:
-            echoed = f"{command}\r".encode() in buf
-            idle = IDLE_AFTER_LINE if echoed and b"\n" in buf else IDLE_NO_LINE
+            if end is not None:
+                if end in buf and b"\n" in buf.split(end, 1)[1]:
+                    break
+                idle = IDLE_NO_LINE
+            else:
+                idle = IDLE_AFTER_LINE if echo in buf and b"\n" in buf else IDLE_NO_LINE
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 break
             try:
                 chunk = await asyncio.wait_for(self._reader.read(4096), min(idle, remaining))
             except TimeoutError:
-                if echoed:
+                if end is None and echo in buf:
                     break
                 continue
             if not chunk:
                 raise DirectorConnectionError(f"{self.host} closed the connection")
             buf += _strip_telnet(chunk)
         text = buf.decode("ascii", errors="replace")
-        echo = f"{command}\r"
-        if echo not in text:
+        if f"{command}\r" not in text:
             raise DirectorConnectionError(f"{self.host} did not answer {command!r}")
-        body = text.split(echo, 1)[1]
+        body = text.split(f"{command}\r", 1)[1]
+        if sentinel:
+            if f"{sentinel}\r" not in body:
+                raise DirectorConnectionError(f"{self.host}: incomplete reply to {command!r}")
+            body = body.split(f"{sentinel}\r", 1)[0]
         if body.strip() == f"xx{command}xx":
             raise DirectorCommandError(f"{self.host} rejected {command!r}")
         return body
 
-    async def request(self, command: str) -> str:
+    async def request(self, command: str, *, complete: bool = False) -> str:
         """Send a command or query and return the reply body (after the echo).
+
+        With ``complete``, the reply is read up to the echo of a following
+        PROTECT? query, for replies that must not be cut short.
 
         The amplifier ends idle sessions after a while; a reused connection that
         turns out to be dead is replaced and the command sent once more.
         """
+        sentinel = SENTINEL if complete else None
         async with self._lock:
             reused = self._writer is not None
             try:
-                return await self._send(command)
+                return await self._send(command, sentinel)
             except DirectorConnectionError:
                 if not reused or self._closed:
                     raise
                 _LOGGER.debug("%s: session dropped, reconnecting", self.host)
-                return await self._send(command)
+                return await self._send(command, sentinel)
 
-    async def _send(self, command: str) -> str:
+    async def _pace(self) -> None:
         gap = MIN_COMMAND_GAP - (time.monotonic() - self._last_command)
         if gap > 0:
             await asyncio.sleep(gap)
+
+    async def _send(self, command: str, sentinel: str | None) -> str:
+        await self._pace()
         await self._connect()
         assert self._writer is not None
         _LOGGER.debug("%s -> %s", self.host, command)
         try:
             self._writer.write(command.encode("ascii") + b"\r")
             await self._writer.drain()
-            body = await self._read_reply(command)
+            if sentinel:
+                self._last_command = time.monotonic()
+                await self._pace()
+                self._writer.write(sentinel.encode("ascii") + b"\r")
+                await self._writer.drain()
+            body = await self._read_reply(command, sentinel)
         except DirectorCommandError:
             raise
         except (OSError, DirectorConnectionError) as err:
@@ -374,14 +404,19 @@ class Director:
 
     async def async_get_sources(self) -> list[Source]:
         """Inputs from INPUT?, kept for decoding SYSTEMstat?."""
-        self.sources = parse_inputs(await self.request("INPUT?"))
+        sources = parse_inputs(await self.request("INPUT?", complete=True))
+        if not sources:
+            raise DirectorConnectionError(f"{self.host}: no inputs in INPUT? reply")
+        self.sources = sources
         return self.sources
 
     async def async_get_status(self, *, loudness: bool = False) -> Status:
         """SYSTEMstat? plus SHORT?, and per-zone loudness when asked."""
         if not self.sources:
             await self.async_get_sources()
-        status = parse_status(await self.request("SYSTEMstat?"), self.analog_count)
+        status = parse_status(await self.request("SYSTEMstat?", complete=True), self.analog_count)
+        if not status.zones:
+            raise DirectorConnectionError(f"{self.host}: no zones in SYSTEMstat? reply")
         try:
             shorts = parse_shorts(await self.request("SHORT?"))
         except DirectorCommandError:

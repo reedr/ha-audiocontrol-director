@@ -48,8 +48,6 @@ class DirectorEntity(CoordinatorEntity[DirectorCoordinator]):
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.base_id}_{key}"
         self._attr_device_info = amp_device_info(coordinator)
-        # The platform module's name is the entity domain (media_player, sensor, ...).
-        coordinator.unique_ids.add((type(self).__module__.rsplit(".", 1)[-1], self._attr_unique_id))
 
     async def _async_run(self, command: Awaitable[None]) -> None:
         """Run a command, then poll soon to pick up the result."""

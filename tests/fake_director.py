@@ -57,6 +57,8 @@ class FakeDirector:
         self.shorts = [0] * len(self.zones)
         self.commands: list[str] = []
         self.silent = False
+        # Seconds to stall before each status row, as a busy amplifier might.
+        self.row_pause = 0.0
         self._server: asyncio.Server | None = None
         self._writers: list[asyncio.StreamWriter] = []
         self.port = 0
@@ -103,6 +105,8 @@ class FakeDirector:
             return self.inputs
         if cmd == "AMP?":
             return self.name
+        if cmd == "PROTECT?":
+            return "Normal\r\n"
         if cmd == "SHORT?":
             return " ".join(str(s) for s in self.shorts) + " \r\n"
         if m := re.fullmatch(r"Z(\d+)loudness\?", cmd):
@@ -155,7 +159,14 @@ class FakeDirector:
                     self.commands.append(cmd)
                     if self.silent:
                         continue
-                    writer.write(f"{cmd}\r{self.reply(cmd)}".encode())
+                    reply = f"{cmd}\r{self.reply(cmd)}"
+                    if cmd == "SYSTEMstat?" and self.row_pause:
+                        for part in reply.split("\r\n"):
+                            writer.write(f"{part}\r\n".encode())
+                            await writer.drain()
+                            await asyncio.sleep(self.row_pause)
+                        continue
+                    writer.write(reply.encode())
                     await writer.drain()
         except ConnectionError:
             pass

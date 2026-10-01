@@ -77,8 +77,10 @@ class LoudnessSwitch(DirectorOutputEntity, SwitchEntity):
         return self.coordinator.data.loudness.get(self._code)
 
     async def _async_set(self, on: bool) -> None:
-        self.coordinator.loudness_changed()
-        await self._async_run(self.coordinator.director.async_set_loudness(self._code, on))
+        try:
+            await self._async_run(self.coordinator.director.async_set_loudness(self._code, on))
+        finally:
+            self.coordinator.loudness_changed()
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn loudness on."""
