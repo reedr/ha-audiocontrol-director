@@ -88,7 +88,7 @@ def async_prepare_registry(
                 ):
                     legacy[code] = _Legacy(slugify(name), name, device.area_id)
         _LOGGER.info("Removing per-zone device %s; its entities are on %s", device.name, amp.name)
-        dev_reg.async_update_device(device.id, remove_config_entry_id=entry.entry_id)
+        dev_reg.async_remove_device(device.id)
 
     for code in status.outputs:
         entity_id = ent_reg.async_get_entity_id(
