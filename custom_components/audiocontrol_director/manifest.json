@@ -10,5 +10,5 @@
   "issue_tracker": "https://github.com/reedr/ha-audiocontrol-director/issues",
   "loggers": ["custom_components.audiocontrol_director"],
   "requirements": [],
-  "version": "1.0.0"
+  "version": "1.0.1"
 }

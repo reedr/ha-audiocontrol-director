@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from unittest.mock import patch
 
 import pytest
 from homeassistant.components.media_player import ATTR_INPUT_SOURCE, ATTR_MEDIA_VOLUME_LEVEL
@@ -14,7 +15,11 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_fire_time_changed
 
-from custom_components.audiocontrol_director.const import CONF_SOURCE_NAMES, DOMAIN
+from custom_components.audiocontrol_director.const import (
+    CONF_SOURCE_NAMES,
+    DOMAIN,
+    MAX_MISSED_POLLS,
+)
 
 
 async def _setup(hass: HomeAssistant, **kwargs) -> MockConfigEntry:
@@ -214,10 +219,29 @@ async def test_regroup_reloads(hass: HomeAssistant, amp1) -> None:
 async def test_unavailable_and_retry(hass: HomeAssistant, amp1) -> None:
     await _setup(hass)
     amp1.silent = True
-    await _poll(hass)
+    with patch("custom_components.audiocontrol_director.director.REPLY_TIMEOUT", 0.2):
+        # A few missed polls keep the last status...
+        for _ in range(MAX_MISSED_POLLS):
+            await _poll(hass)
+            assert hass.states.get("media_player.distributed_amp_1_gym").state == "on"
+        # ...then the players go unavailable.
+        await _poll(hass)
     assert hass.states.get("media_player.distributed_amp_1_gym").state == "unavailable"
     amp1.silent = False
     await _poll(hass)
+    assert hass.states.get("media_player.distributed_amp_1_gym").state == "on"
+
+
+async def test_missed_polls_reset(hass: HomeAssistant, amp1) -> None:
+    """Misses only count while they are in a row."""
+    await _setup(hass)
+    with patch("custom_components.audiocontrol_director.director.REPLY_TIMEOUT", 0.2):
+        for _ in range(2):
+            amp1.silent = True
+            for _ in range(MAX_MISSED_POLLS):
+                await _poll(hass)
+            amp1.silent = False
+            await _poll(hass)
     assert hass.states.get("media_player.distributed_amp_1_gym").state == "on"
 
 

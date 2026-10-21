@@ -57,6 +57,8 @@ class FakeDirector:
         self.shorts = [0] * len(self.zones)
         self.commands: list[str] = []
         self.silent = False
+        # SYSTEMstat? replies still to send without their zone table.
+        self.empty_status = 0
         # Seconds to stall before each status row, as a busy amplifier might.
         self.row_pause = 0.0
         self._server: asyncio.Server | None = None
@@ -100,6 +102,9 @@ class FakeDirector:
     def reply(self, cmd: str) -> str:
         """The body after the echo."""
         if cmd == "SYSTEMstat?":
+            if self.empty_status:
+                self.empty_status -= 1
+                return "\r\n".join(self.header) + "\r\n"
             return self.systemstat()
         if cmd == "INPUT?":
             return self.inputs

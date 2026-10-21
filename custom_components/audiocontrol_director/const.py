@@ -11,5 +11,8 @@ CONF_LEGACY_UNIQUE_ID = "unique_id"
 CONF_SOURCE_NAMES = "source_names"
 
 UPDATE_INTERVAL = timedelta(seconds=5)
+# Failed polls in a row that keep the last status before players go
+# unavailable; a single dropped or garbled reply shouldn't make them flicker.
+MAX_MISSED_POLLS = 3
 # Loudness needs one query per zone, so it is read less often.
 LOUDNESS_INTERVAL = timedelta(seconds=60)

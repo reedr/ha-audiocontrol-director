@@ -98,6 +98,21 @@ async def test_paused_table(amp1, monkeypatch) -> None:
         await director.close()
 
 
+async def test_empty_status_asks_again(amp1) -> None:
+    """A status reply without its zone table is asked for once more."""
+    director = Director("127.0.0.1")
+    try:
+        amp1.empty_status = 1
+        status = await director.async_get_status()
+        assert status.zones
+        assert amp1.commands.count("SYSTEMstat?") == 2
+        amp1.empty_status = 2
+        with pytest.raises(DirectorConnectionError, match="no zones"):
+            await director.async_get_status()
+    finally:
+        await director.close()
+
+
 async def test_no_answer(amp1) -> None:
     amp1.silent = True
     director = Director("127.0.0.1")

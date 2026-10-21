@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.debounce import Debouncer
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import CONF_SOURCE_NAMES, LOUDNESS_INTERVAL, UPDATE_INTERVAL
+from .const import CONF_SOURCE_NAMES, LOUDNESS_INTERVAL, MAX_MISSED_POLLS, UPDATE_INTERVAL
 from .director import Director, DirectorError, Source, Status
 
 _LOGGER = logging.getLogger(__name__)
@@ -49,6 +49,7 @@ class DirectorCoordinator(DataUpdateCoordinator[Status]):
         self._loudness_gen = 0
         self._layout: tuple | None = None
         self._pending_layout: tuple | None = None
+        self._missed = 0
 
     @property
     def sources(self) -> list[Source]:
@@ -87,7 +88,25 @@ class DirectorCoordinator(DataUpdateCoordinator[Status]):
             raise UpdateFailed(str(err)) from err
 
     async def _async_update_data(self) -> Status:
-        loud = self.want_loudness and time.monotonic() - self._loudness_at >= (
+        try:
+            status = await self._async_poll()
+        except UpdateFailed as err:
+            self._missed += 1
+            if self.data is None or self._missed > MAX_MISSED_POLLS:
+                raise
+            _LOGGER.debug(
+                "%s: poll failed (%d of %d allowed), keeping last status: %s",
+                self.director.host,
+                self._missed,
+                MAX_MISSED_POLLS,
+                err,
+            )
+            return self.data
+        self._missed = 0
+        return status
+
+    async def _async_poll(self) -> Status:
+        loud =self.want_loudness and time.monotonic() - self._loudness_at >= (
             LOUDNESS_INTERVAL.total_seconds()
         )
         gen = self._loudness_gen

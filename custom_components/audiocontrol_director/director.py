@@ -416,6 +416,15 @@ class Director:
             await self.async_get_sources()
         status = parse_status(await self.request("SYSTEMstat?", complete=True), self.analog_count)
         if not status.zones:
+            # Now and then a reply arrives without its zone table; ask once
+            # more on a fresh session before giving up.
+            _LOGGER.debug("%s: no zones in SYSTEMstat? reply, asking again", self.host)
+            async with self._lock:
+                await self._drop()
+            status = parse_status(
+                await self.request("SYSTEMstat?", complete=True), self.analog_count
+            )
+        if not status.zones:
             raise DirectorConnectionError(f"{self.host}: no zones in SYSTEMstat? reply")
         try:
             shorts = parse_shorts(await self.request("SHORT?"))
