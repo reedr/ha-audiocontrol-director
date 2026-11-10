@@ -29,8 +29,12 @@
   "options": {
     "step": {
       "init": {
-        "title": "Input names",
-        "description": "Name the inputs as you want them in source lists; each field is labelled with the amplifier's own name for the input. Leave a field empty to use that name. Scripts may keep selecting an input by the amplifier's name (e.g. Channel 1-2) or its code (MX1)."
+        "title": "Options",
+        "description": "Name the inputs as you want them in source lists; each input field is labelled with the amplifier's own name for the input. Leave a field empty to use that name. Scripts may keep selecting an input by the amplifier's name (e.g. Channel 1-2) or its code (MX1).",
+        "data": { "signal_interval": "Zone signal poll interval" },
+        "data_description": {
+          "signal_interval": "How often, in seconds, the zone signal sensors read the amplifier's web page."
+        }
       }
     },
     "abort": {
@@ -43,7 +47,8 @@
       "overheating": { "name": "Overheating" },
       "line_voltage": { "name": "Line voltage" },
       "short_circuit": { "name": "Short circuit" },
-      "zone_overheating": { "name": "{zone} overheating" }
+      "zone_overheating": { "name": "{zone} overheating" },
+      "zone_signal": { "name": "{zone} signal" }
     },
     "button": {
       "all_zones_on": { "name": "All zones on" },

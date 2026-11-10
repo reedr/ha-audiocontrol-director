@@ -1,4 +1,4 @@
-"""Protection, overheating, line voltage and short-circuit alarms."""
+"""Protection, overheating, line voltage and short-circuit alarms, and per-zone signal."""
 
 from __future__ import annotations
 
@@ -100,6 +100,7 @@ async def async_setup_entry(
         AmpBinarySensor(coord, desc) for desc in AMP_BINARY_SENSORS
     ]
     entities += [ZoneOverheatingSensor(coord, zone.code) for zone in coord.data.zones]
+    entities += [ZoneSignalSensor(coord, zone.code) for zone in coord.data.zones]
     async_add_entities(entities)
 
 
@@ -144,3 +145,48 @@ class ZoneOverheatingSensor(DirectorOutputEntity, BinarySensorEntity):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Temperature and the amplifier's wording."""
         return {"temperature": self.output.temperature, "status": self.output.temperature_status}
+
+
+class ZoneSignalSensor(DirectorOutputEntity, BinarySensorEntity):
+    """A zone is getting audio: its status on the web page is Active (Signal Sense on).
+
+    Read from /json/operation.json, polled separately from the telnet status.
+    """
+
+    _attr_translation_key = "zone_signal"
+    _attr_device_class = BinarySensorDeviceClass.SOUND
+
+    def __init__(self, coordinator: DirectorCoordinator, code: str) -> None:
+        """Set up the sensor."""
+        super().__init__(coordinator, "signal", code)
+
+    async def async_added_to_hass(self) -> None:
+        """Also follow the activity poll."""
+        await super().async_added_to_hass()
+        if (activity := self.coordinator.activity) is not None:
+            self.async_on_remove(activity.async_add_listener(self._handle_coordinator_update))
+
+    @property
+    def available(self) -> bool:
+        """Needs both the status and a recent activity reading for this zone."""
+        activity = self.coordinator.activity
+        return (
+            super().available
+            and activity is not None
+            and activity.last_update_success
+            and activity.is_active(self._code) is not None
+        )
+
+    @property
+    def is_on(self) -> bool | None:
+        """Whether the zone is active."""
+        return self.coordinator.activity.is_active(self._code)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """The amplifier's wording, the routed input and whether Signal Sense is on."""
+        return {
+            "status": (self.coordinator.activity.data or {}).get(self._code),
+            "source": self.coordinator.source_name(self.output.source),
+            "signal_sense": self.output.signal_sense,
+        }

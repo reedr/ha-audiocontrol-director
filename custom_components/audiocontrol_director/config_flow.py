@@ -16,9 +16,22 @@ from homeassistant.config_entries import (
 from homeassistant.const import CONF_HOST
 from homeassistant.core import callback
 from homeassistant.helpers.device_registry import format_mac
+from homeassistant.helpers.selector import (
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
+)
 from homeassistant.helpers.service_info.dhcp import DhcpServiceInfo
 
-from .const import CONF_MAC, CONF_SOURCE_NAMES, DOMAIN
+from .const import (
+    CONF_MAC,
+    CONF_SIGNAL_INTERVAL,
+    CONF_SOURCE_NAMES,
+    DEFAULT_SIGNAL_INTERVAL,
+    DOMAIN,
+    MAX_SIGNAL_INTERVAL,
+    MIN_SIGNAL_INTERVAL,
+)
 from .director import Director, DirectorError
 
 _LOGGER = logging.getLogger(__name__)
@@ -141,7 +154,7 @@ class DirectorConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class DirectorOptionsFlow(OptionsFlow):
-    """Rename the inputs."""
+    """Rename the inputs and set the signal poll interval."""
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """One field per input, labelled with the amplifier's name for it."""
@@ -157,15 +170,32 @@ class DirectorOptionsFlow(OptionsFlow):
                 for source in sources
                 if (name := user_input.get(source.name, "").strip()) and name != source.name
             }
-            return self.async_create_entry(data={**entry.options, CONF_SOURCE_NAMES: names})
+            interval = int(user_input.get(CONF_SIGNAL_INTERVAL, DEFAULT_SIGNAL_INTERVAL))
+            return self.async_create_entry(
+                data={**entry.options, CONF_SOURCE_NAMES: names, CONF_SIGNAL_INTERVAL: interval}
+            )
 
         schema = vol.Schema(
             {
-                vol.Optional(
-                    source.name,
-                    description={"suggested_value": current.get(source.code, "")},
-                ): str
-                for source in sources
+                vol.Required(
+                    CONF_SIGNAL_INTERVAL,
+                    default=entry.options.get(CONF_SIGNAL_INTERVAL, DEFAULT_SIGNAL_INTERVAL),
+                ): NumberSelector(
+                    NumberSelectorConfig(
+                        min=MIN_SIGNAL_INTERVAL,
+                        max=MAX_SIGNAL_INTERVAL,
+                        step=1,
+                        unit_of_measurement="s",
+                        mode=NumberSelectorMode.BOX,
+                    )
+                ),
+                **{
+                    vol.Optional(
+                        source.name,
+                        description={"suggested_value": current.get(source.code, "")},
+                    ): str
+                    for source in sources
+                },
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)

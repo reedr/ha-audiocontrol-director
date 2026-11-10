@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import time
 from dataclasses import replace
+from typing import TYPE_CHECKING
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -13,6 +14,9 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .const import CONF_SOURCE_NAMES, LOUDNESS_INTERVAL, MAX_MISSED_POLLS, UPDATE_INTERVAL
 from .director import Director, DirectorError, Source, Status
+
+if TYPE_CHECKING:
+    from .activity import ActivityCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -50,6 +54,7 @@ class DirectorCoordinator(DataUpdateCoordinator[Status]):
         self._layout: tuple | None = None
         self._pending_layout: tuple | None = None
         self._missed = 0
+        self.activity: ActivityCoordinator | None = None
 
     @property
     def sources(self) -> list[Source]:

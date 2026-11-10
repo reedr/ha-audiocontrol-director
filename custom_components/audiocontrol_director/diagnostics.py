@@ -19,4 +19,5 @@ async def async_get_config_entry_diagnostics(
         "entry": entry.as_dict(),
         "sources": [asdict(s) for s in coord.sources],
         "status": asdict(coord.data) if coord.data else None,
+        "activity": coord.activity.data if coord.activity else None,
     }

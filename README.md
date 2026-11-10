@@ -30,6 +30,7 @@ one config entry and one device.
 | `sensor` *Zone* temperature | Output-stage temperature per zone. Disabled by default. |
 | `binary_sensor` Protection, Overheating, Line voltage, Short circuit | On when the amplifier reports anything other than Normal. Attributes give its own wording and the zones involved. |
 | `binary_sensor` *Zone* overheating | On when a zone's temperature status isn't Normal (e.g. `OverTemp`). |
+| `binary_sensor` *Zone* signal | On while the zone is getting audio: its status on the amplifier's web page (`/json/operation.json`, polled every 10 s by default; set *Zone signal poll interval* in the options) is `Active`, which needs Signal Sense on for that zone. The amplifier keeps a zone active for its own hold time after the signal stops. Attributes: `status`, `source`, `signal_sense`. |
 | `button` All zones on / off | `allZon` / `allZoff`. |
 | `button` Power on / Standby | Global power. Disabled by default; the amplifier doesn't report its power state. |
 

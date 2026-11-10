@@ -1,0 +1,381 @@
+{
+ "build": "v2.0.37 RB SDS",
+ "ext12V": 0,
+ "ampModel": "Director Matrix 6800: ",
+ "ampName": "Distributed Amp 1",
+ "pageLock": 0,
+ "numLogs": 52,
+ "acValue": 125,
+ "acStatus": "Normal",
+ "mainPower": 1,
+ "signalSense": 1,
+ "tempValue": 110,
+ "displayCentigrade": 0,
+ "tempStatus": "Normal",
+ "areLEDsFlashing": 0,
+ "SDSEnabled": 0,
+ "SDSSelectedInput": 8,
+ "inputNames": [
+  {
+   "name": "Channel 1-2",
+   "value": 0,
+   "": ""
+  },
+  {
+   "name": "Channel 3-4",
+   "value": 1,
+   "": ""
+  },
+  {
+   "name": "Channel 5-6",
+   "value": 2,
+   "": ""
+  },
+  {
+   "name": "Channel 7-8",
+   "value": 3,
+   "": ""
+  },
+  {
+   "name": "Channel 9-10",
+   "value": 4,
+   "": ""
+  },
+  {
+   "name": "Channel 11-12",
+   "value": 5,
+   "": ""
+  },
+  {
+   "name": "Channel 13-14",
+   "value": 6,
+   "": ""
+  },
+  {
+   "name": "Channel 15-16",
+   "value": 7,
+   "": ""
+  },
+  {
+   "name": "Digital In A",
+   "value": 8,
+   "": ""
+  },
+  {
+   "name": "Digital In B",
+   "value": 9,
+   "": ""
+  },
+  {
+   "name": "Pink noise",
+   "value": 10,
+   "": ""
+  }
+ ],
+ "inputNamesDigital": [
+  {
+   "name": "Channel 1-2",
+   "value": 0,
+   "": ""
+  },
+  {
+   "name": "Channel 3-4",
+   "value": 1,
+   "": ""
+  },
+  {
+   "name": "Channel 5-6",
+   "value": 2,
+   "": ""
+  },
+  {
+   "name": "Channel 7-8",
+   "value": 3,
+   "": ""
+  },
+  {
+   "name": "Channel 9-10",
+   "value": 4,
+   "": ""
+  },
+  {
+   "name": "Channel 11-12",
+   "value": 5,
+   "": ""
+  },
+  {
+   "name": "Channel 13-14",
+   "value": 6,
+   "": ""
+  },
+  {
+   "name": "Channel 15-16",
+   "value": 7,
+   "": ""
+  },
+  {
+   "name": "Digital In A",
+   "value": 8,
+   "": ""
+  },
+  {
+   "name": "Digital In B",
+   "value": 9,
+   "": ""
+  },
+  {
+   "name": "Pink noise",
+   "value": 10,
+   "": ""
+  }
+ ],
+ "inputChannel": [
+  {
+   "trim": 6,
+   "": ""
+  },
+  {
+   "trim": 6,
+   "": ""
+  },
+  {
+   "trim": 6,
+   "": ""
+  },
+  {
+   "trim": 6,
+   "": ""
+  },
+  {
+   "trim": 6,
+   "": ""
+  },
+  {
+   "trim": 6,
+   "": ""
+  },
+  {
+   "trim": 6,
+   "": ""
+  },
+  {
+   "trim": 6,
+   "": ""
+  },
+  {
+   "trim": 2,
+   "": ""
+  },
+  {
+   "trim": 6,
+   "": ""
+  },
+  {
+   "trim": 0,
+   "": ""
+  }
+ ],
+ "outputZones": [
+  {
+   "identifier": "1",
+   "name": "Music room",
+   "zoneNumber": 1,
+   "group": 1,
+   "mono": 0,
+   "mute": 0,
+   "zonePower": 1,
+   "status": "Off",
+   "inputSource": 0,
+   "inputSourceDig": 0,
+   "trim": 0,
+   "tempValue": 98,
+   "tempStatus": "Normal",
+   "protectionStatus": "Normal",
+   "SDS100Level": 0,
+   "SDS100Enabled": 0,
+   "isDigital": 0,
+   "": ""
+  },
+  {
+   "identifier": "2",
+   "name": "music room",
+   "zoneNumber": 2,
+   "group": 1,
+   "mono": 0,
+   "mute": 0,
+   "zonePower": 1,
+   "status": "Off",
+   "inputSource": 0,
+   "inputSourceDig": 0,
+   "trim": 0,
+   "tempValue": 98,
+   "tempStatus": "Normal",
+   "protectionStatus": "Normal",
+   "SDS100Level": 0,
+   "SDS100Enabled": 0,
+   "isDigital": 0,
+   "": ""
+  },
+  {
+   "identifier": "3",
+   "name": "music room sub",
+   "zoneNumber": 3,
+   "group": 1,
+   "mono": 1,
+   "mute": 0,
+   "zonePower": 1,
+   "status": "Off",
+   "inputSource": 0,
+   "inputSourceDig": 0,
+   "trim": -10,
+   "tempValue": 110,
+   "tempStatus": "Normal",
+   "protectionStatus": "Normal",
+   "SDS100Level": 0,
+   "SDS100Enabled": 0,
+   "isDigital": 0,
+   "": ""
+  },
+  {
+   "identifier": "4",
+   "name": "sauna",
+   "zoneNumber": 4,
+   "group": 0,
+   "mono": 0,
+   "mute": 0,
+   "zonePower": 1,
+   "status": "Off",
+   "inputSource": 3,
+   "inputSourceDig": 2,
+   "trim": 0,
+   "tempValue": 110,
+   "tempStatus": "Normal",
+   "protectionStatus": "Normal",
+   "SDS100Level": 0,
+   "SDS100Enabled": 0,
+   "isDigital": 0,
+   "": ""
+  },
+  {
+   "identifier": "5",
+   "name": "Gym",
+   "zoneNumber": 5,
+   "group": 0,
+   "mono": 0,
+   "mute": 0,
+   "zonePower": 1,
+   "status": "Active",
+   "inputSource": 4,
+   "inputSourceDig": 4,
+   "trim": 0,
+   "tempValue": 116,
+   "tempStatus": "Normal",
+   "protectionStatus": "Normal",
+   "SDS100Level": 0,
+   "SDS100Enabled": 0,
+   "isDigital": 0,
+   "": ""
+  },
+  {
+   "identifier": "6",
+   "name": "great room",
+   "zoneNumber": 6,
+   "group": 2,
+   "mono": 0,
+   "mute": 0,
+   "zonePower": 1,
+   "status": "Off",
+   "inputSource": 5,
+   "inputSourceDig": 4,
+   "trim": 0,
+   "tempValue": 116,
+   "tempStatus": "Normal",
+   "protectionStatus": "Normal",
+   "SDS100Level": 0,
+   "SDS100Enabled": 0,
+   "isDigital": 0,
+   "": ""
+  },
+  {
+   "identifier": "7",
+   "name": "great room",
+   "zoneNumber": 7,
+   "group": 2,
+   "mono": 0,
+   "mute": 0,
+   "zonePower": 1,
+   "status": "Off",
+   "inputSource": 5,
+   "inputSourceDig": 4,
+   "trim": 0,
+   "tempValue": 116,
+   "tempStatus": "Normal",
+   "protectionStatus": "Normal",
+   "SDS100Level": 0,
+   "SDS100Enabled": 0,
+   "isDigital": 0,
+   "": ""
+  },
+  {
+   "identifier": "8",
+   "name": "great room sub",
+   "zoneNumber": 8,
+   "group": 2,
+   "mono": 1,
+   "mute": 0,
+   "zonePower": 1,
+   "status": "Off",
+   "inputSource": 5,
+   "inputSourceDig": 4,
+   "trim": -10,
+   "tempValue": 116,
+   "tempStatus": "Normal",
+   "protectionStatus": "Normal",
+   "SDS100Level": 0,
+   "SDS100Enabled": 0,
+   "isDigital": 0,
+   "": ""
+  },
+  {
+   "identifier": "Digital Out A",
+   "name": "Digital Out A",
+   "zoneNumber": 0,
+   "group": 0,
+   "mono": 0,
+   "mute": 0,
+   "zonePower": 1,
+   "status": "Active",
+   "inputSource": 8,
+   "inputSourceDig": 8,
+   "trim": 0,
+   "tempValue": 0,
+   "tempStatus": "Low",
+   "protectionStatus": "Normal",
+   "SDS100Level": 0,
+   "SDS100Enabled": 0,
+   "isDigital": 1,
+   "": ""
+  },
+  {
+   "identifier": "Digital Out B",
+   "name": "Digital Out B",
+   "zoneNumber": 0,
+   "group": 0,
+   "mono": 0,
+   "mute": 0,
+   "zonePower": 1,
+   "status": "Active",
+   "inputSource": 9,
+   "inputSourceDig": 8,
+   "trim": 0,
+   "tempValue": 0,
+   "tempStatus": "Low",
+   "protectionStatus": "Normal",
+   "SDS100Level": 0,
+   "SDS100Enabled": 0,
+   "isDigital": 1,
+   "": ""
+  }
+ ],
+ "": ""
+}
